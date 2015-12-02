@@ -1,0 +1,3 @@
+#! /usr/bin/env bash
+STDIN=$(cat)
+eval ${STDIN}

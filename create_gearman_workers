@@ -1,0 +1,22 @@
+#! /usr/bin/env bash
+# vim:ft=sh
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ME=$(basename ${BASH_SOURCE[0]})
+source utils
+ME_ABS=$(abs_path ${BASH_SOURCE[0]})
+
+# allow the specification of a directory from which to load
+# commands, otherwise... use the current dir
+COMMAND_DIR=${1:-$(pwd)}
+
+debug "Working in: $COMMAND_DIR"
+
+for candidate in ${COMMAND_DIR}/*
+do
+  if [ -x "$candidate" -a -f "$candidate" ]; then
+    COMMAND_PATH=$(abs_path $candidate)
+    COMMAND_NAME=$(basename $COMMAND_PATH)
+    echo $COMMAND_NAME
+  fi
+done
+
