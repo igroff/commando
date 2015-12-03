@@ -8,7 +8,7 @@ ME_ABS=$(abs_path ${BASH_SOURCE[0]})
 # allow the specification of a directory from which to load
 # commands, otherwise... use the current dir
 COMMAND_DIR=${1:-$(pwd)}
-
+shift 
 debug "Working in: $COMMAND_DIR"
 
 for candidate in ${COMMAND_DIR}/*
@@ -16,7 +16,12 @@ do
   if [ -x "$candidate" -a -f "$candidate" ]; then
     COMMAND_PATH=$(abs_path $candidate)
     COMMAND_NAME=$(basename $COMMAND_PATH)
-    echo $COMMAND_NAME
+    # skip myself, if for whatever reason we come accross ourselves
+    [ "${COMMAND_PATH}" == "${ME_ABS}" ] && continue
+    echo "creating command ${COMMAND_NAME}"
+    gearman ${@} -f ${COMMAND_NAME} -w -- ${COMMAND_PATH} &
   fi
 done
+
+wait
 
